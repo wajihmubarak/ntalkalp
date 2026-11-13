@@ -87,10 +87,27 @@ summary{font-weight:700;cursor:pointer}
 .cf.show{display:flex;animation:in .2s ease both}
 .cfb{background:var(--card);padding:22px 20px;border-radius:18px;width:min(86vw,340px);text-align:center;display:flex;flex-direction:column;gap:16px;box-shadow:var(--sh)}
 .cfb p{margin:0;font-weight:700;line-height:1.6}.cfb .row{justify-content:center}
-.voice{width:100%;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
-.vb{border:2px solid transparent;border-radius:14px;background:var(--card);color:var(--text);padding:10px 14px;font:700 14px inherit}
-.vb.on{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,var(--card))}
+.voice{width:100%;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.vb{border:2px solid transparent;border-radius:50%;background:var(--card);color:var(--text);width:54px;height:54px;padding:0;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.vb .ic{width:26px;height:26px}
+.vb .sl{display:none}
+.vb:not(.on) .sl{display:inline}
+.vb:not(.on){opacity:.85}
+.vb.on{border-color:#2e9e5b;background:rgba(46,158,91,.18);color:#2e9e5b}
 #vSt{font-size:12px;opacity:.8}
+.ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.15em;flex:none}
+.mb .i{display:inline-grid;place-items:center;vertical-align:middle}
+.mb .i .ic{width:28px;height:28px;stroke-width:2.2}
+.lob h3 .ic{width:18px;height:18px;vertical-align:-.25em}
+.codebtn .ic{width:16px;height:16px;vertical-align:-.2em}
+#waitCard{width:100%;background:var(--card);border-radius:18px;padding:18px;text-align:center;display:flex;flex-direction:column;gap:10px;box-shadow:var(--sh);animation:in .3s ease both}
+#waitCard.hide{display:none}
+#leftNote{color:var(--jump);font-size:17px;background:color-mix(in srgb,var(--jump) 14%,var(--card));border-radius:12px;padding:10px}
+.codebig{width:100%;border:3px dashed var(--acc);border-radius:18px;background:var(--bg);color:var(--acc);padding:16px 10px;font:900 40px inherit;letter-spacing:8px;direction:ltr}
+.codebtn{border:2px dashed var(--acc);background:var(--bg);color:var(--text);border-radius:12px;padding:6px 12px;font:700 15px inherit}
+.codebtn b{letter-spacing:3px;color:var(--acc);font-size:18px}
+#waitCard small{opacity:.8}.pulse{animation:pu 1.4s infinite}
+#game.waiting .score,#game.waiting .bw,#game.waiting .row,#game.waiting #status{display:none}
 .step{display:flex;flex-direction:column;gap:8px}.step small,.opt small{opacity:.75;font-size:13px}.step h3{margin:0;font-size:16px}
 .opt{background:var(--bg);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}.opt b{font-size:16px}
 .sep{text-align:center;opacity:.6;font-weight:700}
@@ -155,15 +172,29 @@ summary{font-weight:700;cursor:pointer}
 <section class="screen" id="play">
 <div class="top"><button class="ib" id="pHome">→ القائمة</button><strong id="pTitle"></strong></div>
 <div id="lobby" class="lob hide">
-<div class="step"><h3>١. اكتب اسمك</h3><input id="nick" maxlength="14" placeholder="مثلًا: أحمد"><small>صاحبك بيشوف الاسم ده في اللعبة</small></div>
-<div class="step"><h3>٢. اختار واحد</h3>
-<div class="opt"><b>🆕 أنشئ غرفة جديدة</b><small>بتاخد كود، أرسله لصاحبك عشان يدخل</small><button class="btn" id="mk">إنشاء غرفة</button></div>
-<div class="sep">أو</div>
-<div class="opt"><b>🚪 ادخل غرفة صاحبك</b><small>اكتب الكود اللي أرسله ليك</small><input id="code" maxlength="5" placeholder="الكود" style="text-transform:uppercase;text-align:center;letter-spacing:4px"><button class="btn g" id="jn">دخول الغرفة</button></div></div>
-<h3>🏆 أفضل اللاعبين</h3><ol id="lb"><li>…</li></ol>
+<div id="lbName" class="step">
+<h3>اكتب اسمك</h3>
+<input id="nick" maxlength="14" placeholder="مثلًا: أحمد" autocomplete="off">
+<small>صاحبك بيشوف الاسم ده في اللعبة</small>
+<button class="btn" id="nNext">التالي ←</button>
 </div>
-<div id="roombar" class="rb hide"><span>الغرفة <b id="rc"></b> · أنت <span id="rl"></span></span><span><button class="btn g" id="cp">نسخ</button> <button class="btn g" id="lv">خروج</button></span></div>
+<div id="lbChoose" class="step hide">
+<h3 id="hello"></h3>
+<button class="mb" id="bMk"><span><span class="i"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span> إنشاء غرفة<small>بتاخد كود، ترسله لصاحبك</small></span><b>←</b></button>
+<button class="mb s" id="bJn"><span><span class="i"><svg class="ic" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg></span> الدخول لغرفة<small>اكتب الكود اللي أرسله ليك صاحبك</small></span><b>←</b></button>
+<button class="ib" id="chName">تغيير الاسم</button>
+<h3><svg class="ic" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg> أفضل اللاعبين</h3><ol id="lb"><li>…</li></ol>
+</div>
+<div id="lbJoin" class="step hide">
+<h3>اكتب كود الغرفة</h3>
+<input id="code" maxlength="5" placeholder="الكود" autocomplete="off" style="text-transform:uppercase;text-align:center;letter-spacing:6px;font-size:22px">
+<button class="btn" id="jGo">دخول الغرفة</button>
+<button class="ib" id="jBack">→ رجوع</button>
+</div>
+</div>
+<div id="roombar" class="rb hide"><span>الغرفة</span><button class="codebtn" id="cp"><b id="rc"></b> <svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button><span>أنت <span id="rl"></span></span><button class="btn g" id="lv">خروج</button></div>
 <div id="game">
+<div id="waitCard" class="hide"><b id="leftNote" class="hide">صديقك غادر الغرفة</b><b>كود غرفتك</b><button class="codebig" id="cpBig"><span id="wc"></span></button><small>اضغط على الكود عشان تنسخه، وأرسله لصاحبك</small><small class="pulse">بانتظار صاحبك يدخل…</small></div>
 <div class="score">
 <div class="pl" id="pl1"><span class="disc d1"></span><div><b id="n1">الأبيض</b><small>المتبقي <span id="r1">12</span> · أكل <span id="c1">0</span></small></div></div>
 <div class="pl" id="pl2"><span class="disc d2"></span><div><b id="n2">الأسود</b><small>المتبقي <span id="r2">12</span> · أكل <span id="c2">0</span></small></div></div>
@@ -172,7 +203,10 @@ summary{font-weight:700;cursor:pointer}
 <div class="bw"><div id="grid"></div>
 <div class="ov" id="ov"><h2 id="ot"></h2><div id="om"></div><button class="btn" id="again">إعادة اللعب</button></div></div>
 <div class="row"><button class="btn" id="end">إنهاء الدور</button><button class="btn g" id="rs">لعبة جديدة</button></div>
-<div id="voice" class="voice hide"><button class="vb" id="vMic"></button><button class="vb" id="vSpk"></button><span id="vSt"></span></div>
+<div id="voice" class="voice hide">
+<button class="vb" id="vMic" aria-label="المايك"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path class="sl" d="M3 3l18 18"/></svg></button>
+<button class="vb" id="vSpk" aria-label="الصوت"><svg class="ic" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="sl" d="M3 3l18 18"/></svg></button>
+<span id="vSt"></span></div>
 <div id="chat" class="chat hide"><div class="qk"><button data-t="👏">👏</button><button data-t="😂">😂</button><button data-t="🔥">🔥</button><button data-t="يا سلام!">يا سلام!</button><button data-t="مرة تانية؟">مرة تانية؟</button></div>
 <div class="cr"><input id="msgIn" maxlength="60" placeholder="اكتب رسالة…"><button class="btn" id="msgSend">إرسال</button></div></div>
 </div>
@@ -232,13 +266,13 @@ function place(e,i){e.style.left=(i%5)*20+'%';e.style.top=(i/5|0)*20+'%'}
 function mk(i,o){const e=document.createElement('div');e.className='pc p'+o;e.innerHTML='<i></i>';place(e,i);grid.appendChild(e);els[i]=e}
 function loadBoard(str){els.forEach(e=>e&&e.remove());els.fill(null);B=Array.from(str,Number);B.forEach((o,i)=>o&&mk(i,o))}
 
-let lastN=null,db=null,me=null,room=null,myRole=0,vL=-1,lastMv=null,counted=false,leadUn=null,myStats={wins:0,games:0};
+let lastLeft=null,lastN=null,db=null,me=null,room=null,myRole=0,vL=-1,lastMv=null,counted=false,leadUn=null,myStats={wins:0,games:0};
 const getNick=()=>{const v=$('#nick').value.trim().slice(0,14);if(v)lset('nk',v);return v};
 function needName(){const v=getNick();if(!v){const i=$('#nick');i.classList.add('shake');setTimeout(()=>i.classList.remove('shake'),450);i.focus();toast('اكتب اسمك أول عشان صاحبك يعرفك')}return v}
 $('#nick').value=ls('nk','');
 const nm=p=>mode==='on'&&room?((p===1?room.p1:room.p2)||{}).name||'بانتظار لاعب':p===1?'الأبيض':(mode==='ai'?'الكمبيوتر':'الأسود');
 const err=()=>toast('تعذّر التنفيذ، تأكد من الاتصال وجرّب مرة ثانية');
-function layout(){const on=mode==='on';$('#voice').classList.toggle('hide',!(on&&room&&room.p2&&myRole>0));$('#chat').classList.toggle('hide',!(on&&room&&room.p2&&myRole>0));$('#lobby').classList.toggle('hide',!on||!!room);$('#roombar').classList.toggle('hide',!(on&&room));$('#game').classList.toggle('hide',on&&!room);$('#rs').classList.toggle('hide',on);grid.classList.toggle('flip',on&&myRole===2)}
+function layout(){const on=mode==='on';$('#leftNote').classList.toggle('hide',!(room&&room.gone&&!room.p2));const wt=on&&room&&!room.p2;$('#game').classList.toggle('waiting',!!wt);$('#waitCard').classList.toggle('hide',!wt);$('#voice').classList.toggle('hide',!(on&&room&&room.p2&&myRole>0));$('#chat').classList.toggle('hide',!(on&&room&&room.p2&&myRole>0));$('#lobby').classList.toggle('hide',!on||!!room);$('#roombar').classList.toggle('hide',!(on&&room));$('#game').classList.toggle('hide',on&&!room);$('#rs').classList.toggle('hide',on);grid.classList.toggle('flip',on&&myRole===2)}
 function sync(w=-1){if(mode!=='on'||!room)return;vL++;room.ref.update({b:B.join(''),turn,chain:chain?sel:-1,last:lastMv,v:vL,noCap,w}).catch(err)}
 function newGame(){moves=0;gid++;loadBoard(init().join(''));turn=1;sel=null;chain=false;over=false;busy=false;noCap=0;$('#ov').classList.remove('show');render()}
 function targets(){if(sel==null)return[];const j=jumps(B,sel).map(x=>({...x,j:1}));return chain?j:steps(B,sel).map(t=>({to:t,j:0})).concat(j)}
@@ -249,7 +283,7 @@ $('#pl1').classList.toggle('act',!over&&turn===1);$('#pl2').classList.toggle('ac
 $('#end').style.display=chain&&!busy&&!over?'block':'none';
 let st;if(over)st='';else if(mode==='on'&&room){st=!room.p2?'بانتظار الخصم… شارك الكود '+room.code:myRole===0?'تتفرّج — دور '+nm(turn):turn===myRole?(chain?'كمّل القفز أو أنهِ دورك':'دورك'):'دور '+nm(turn)+'…'}
 else st=mode==='ai'&&turn===2?'الكمبيوتر يفكّر…':chain?'كمّل القفز أو أنهِ دورك':mode==='ai'?'دورك':'دور '+nm(turn);
-$('#status').textContent=st;if(room){$('#rc').textContent=room.code;$('#rl').textContent=myRole===1?'الأبيض':myRole===2?'الأسود':'متفرّج'}}
+$('#status').textContent=st;if(room){$('#rc').textContent=room.code;$('#wc').textContent=room.code;$('#rl').textContent=myRole===1?'الأبيض':myRole===2?'الأسود':'متفرّج'}}
 function movePiece(f,t,cap){moves++;const o=B[f];B[f]=0;B[t]=o;const e=els[f];els[f]=null;els[t]=e;place(e,t);
 if(cap!=null){B[cap]=0;const d=els[cap];els[cap]=null;d.classList.add('dead');setTimeout(()=>d.remove(),350);noCap=0;snd('cap')}else{noCap++;snd('move')}}
 function click(i){if(over||busy||(mode==='ai'&&turn===2)||(mode==='on'&&(!room||!room.p2||turn!==myRole)))return;const t=targets().find(x=>x.to===i);
@@ -281,9 +315,22 @@ const rc=()=>Array.from({length:5},()=>'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.ra
 let working=false;
 async function createRoom(){if(!db||room||working)return;const name=needName();if(!name)return;working=true;try{for(let k=0;k<5;k++){const code=rc(),r=db.doc('rooms/'+code);if((await r.get()).exists)continue;await r.set({b:init().join(''),turn:1,chain:-1,last:null,v:0,noCap:0,w:-1,p1:{id:me,name},t:Date.now()});enter(code);return}}catch(e){err()}finally{working=false}}
 async function joinRoom(code){code=(code||'').trim().toUpperCase();if(!db||room||working)return;const nick=needName();if(!nick)return;if(code.length<3)return toast('اكتب الكود اللي أرسله ليك صاحبك');working=true;try{const r=db.doc('rooms/'+code),s=await r.get();if(!s.exists)return toast('الغرفة غير موجودة');const d=s.data();if(!d.p2&&d.p1.id!==me)await r.update({p2:{id:me,name:nick}});enter(code)}catch(e){err()}finally{working=false}}
-function enter(code){moves=0;lastN=null;gid++;vL=-1;counted=false;room={code,ref:db.doc('rooms/'+code),p1:null,p2:null};myRole=0;loadBoard(init().join(''));turn=1;sel=null;chain=false;over=false;busy=false;noCap=0;$('#ov').classList.remove('show');try{location.hash='room-'+code}catch(e){}
+function enter(code){moves=0;lastN=null;lastLeft=null;gid++;vL=-1;counted=false;room={code,ref:db.doc('rooms/'+code),p1:null,p2:null};myRole=0;loadBoard(init().join(''));turn=1;sel=null;chain=false;over=false;busy=false;noCap=0;$('#ov').classList.remove('show');try{location.hash='room-'+code}catch(e){}
 layout();render();room.un=room.ref.onSnapshot(onRoom,()=>toast('انقطع الاتصال بالغرفة'))}
-function onRoom(s){if(!room)return;if(!s.exists){toast('الغرفة انحذفت');leaveRoom();return}const d=s.data();room.p1=d.p1;room.p2=d.p2;room.m1=d.m1;room.m2=d.m2;myRole=d.p1.id===me?1:(d.p2&&d.p2.id===me?2:0);layout();if(room.p2&&myRole>0&&!vc)vStart();
+/* presence: لو اللاعب قفل الصفحة أو انقطع النت، الخصم يعرف */
+function setPresence(){if(!room||!room.ref.od)return;try{room.od&&room.od.cancel();const TS=firebase.database.ServerValue.TIMESTAMP;room.odRole=myRole;room.od=room.ref.od();
+if(myRole===2)room.od.update({p2:null,m2:false,left:{id:me,n:TS},b:init().join(''),turn:1,chain:-1,last:null,v:TS,noCap:0,w:-1}).catch(()=>{});
+else if(myRole===1)room.od.update({left:{id:me,n:TS}}).catch(()=>{})}catch(e){}}
+function onRoom(s){if(!room)return;if(!s.exists){toast('الغرفة انحذفت');leaveRoom();return}const d=s.data();const was=myRole;room.p1=d.p1;room.p2=d.p2;room.m1=d.m1;room.m2=d.m2;myRole=d.p1.id===me?1:(d.p2&&d.p2.id===me?2:0);
+if(was>0&&myRole===0){toast('خرجت من الغرفة (انقطع الاتصال)');leaveRoom();return}
+const L=d.left;
+if(L){if(lastLeft===null)lastLeft=L.n;else if(L.n!==lastLeft){lastLeft=L.n;if(L.id!==me){room.gone=true;toast('صديقك غادر الغرفة');try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}snd('cap');
+if(myRole===2&&d.p1&&L.id===d.p1.id)room.ref.update({p1:d.p2,p2:null,m1:false,m2:false,b:init().join(''),turn:1,chain:-1,last:null,v:Math.max(Date.now(),vL+1000),noCap:0,w:-1}).catch(err)}}}
+else if(lastLeft===null)lastLeft=0;
+if(room.p2)room.gone=false;
+if(!room.p2&&vc)vStop();
+if(myRole>0&&room.odRole!==myRole)setPresence();
+layout();if(room.p2&&myRole>0&&!vc)vStart();
 if(d.v>vL){const str=d.b,l=d.last;if(B.join('')!==str){if(l&&d.v===vL+1&&B[l.f]&&!B[l.t])movePiece(l.f,l.t,l.c>=0?l.c:null);if(B.join('')!==str)loadBoard(str)}
 vL=d.v;turn=d.turn;noCap=d.noCap||0;if(turn===myRole&&d.chain>=0){chain=true;sel=d.chain}else{chain=false;sel=null}
 if(d.w>=0){if(!over){over=true;showEnd(d.w);record(d.w)}}else if(over){over=false;counted=false;$('#ov').classList.remove('show')}}
@@ -293,16 +340,30 @@ function bubble(who,text,mine){const box=$('#bubbles');while(box.children.length
 function sendMsg(t){t=(t||'').trim().slice(0,60);if(!t||!room||!myRole||Date.now()-(sendMsg.l||0)<900)return;sendMsg.l=Date.now();room.ref.update({msg:{r:myRole,t,n:Date.now()}}).catch(err);$('#msgIn').value=''}
 $('#msgSend').onclick=()=>sendMsg($('#msgIn').value);$('#msgIn').onkeydown=e=>{if(e.key==='Enter')sendMsg(e.target.value)};
 document.querySelectorAll('.qk button').forEach(b=>b.onclick=()=>sendMsg(b.dataset.t));
-function leaveRoom(){if(!room)return;vStop();try{room.un&&room.un();if(myRole===1&&!room.p2)room.ref.delete().catch(()=>{})}catch(e){}room=null;myRole=0;over=false;$('#ov').classList.remove('show');try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}layout()}
-$('#mk').onclick=createRoom;$('#jn').onclick=()=>joinRoom($('#code').value);function ask(t,ok,lab){$('#cfT').textContent=t;$('#cfOk').textContent=lab||'خروج';$('#cf').classList.add('show');$('#cfOk').onclick=()=>{$('#cf').classList.remove('show');ok()};$('#cfNo').onclick=()=>$('#cf').classList.remove('show')}
+function leaveRoom(){if(!room)return;vStop();
+try{room.od&&room.od.cancel();
+if(myRole===1&&!room.p2)room.ref.delete().catch(()=>{});
+else if(myRole===2&&room.p2)room.ref.update({p2:null,m2:false,left:{id:me,n:Date.now()},b:init().join(''),turn:1,chain:-1,last:null,v:Math.max(Date.now(),vL+1000),noCap:0,w:-1}).catch(()=>{});
+else if(myRole===1)room.ref.update({left:{id:me,n:Date.now()}}).catch(()=>{});
+room.un&&room.un()}catch(e){}
+room=null;myRole=0;over=false;lobbyStep('lbChoose');$('#hello').textContent='أهلًا يا '+(getNick()||'لاعب')+' 👋 اختار:';$('#ov').classList.remove('show');try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}layout()}
+function lobbyStep(n){['lbName','lbChoose','lbJoin'].forEach(id=>$('#'+id).classList.toggle('hide',id!==n))}
+let wantJoin=false;
+function nameNext(){const v=needName();if(!v)return;if(wantJoin){wantJoin=false;lobbyStep('lbJoin');return}$('#hello').textContent='أهلًا يا '+v+' 👋 اختار:';lobbyStep('lbChoose')}
+$('#nNext').onclick=nameNext;$('#nick').onkeydown=e=>{if(e.key==='Enter')nameNext()};
+$('#bMk').onclick=createRoom;$('#bJn').onclick=()=>lobbyStep('lbJoin');$('#jBack').onclick=()=>lobbyStep('lbChoose');
+$('#jGo').onclick=()=>joinRoom($('#code').value);$('#code').onkeydown=e=>{if(e.key==='Enter')joinRoom(e.target.value)};
+$('#chName').onclick=()=>lobbyStep('lbName');function ask(t,ok,lab){$('#cfT').textContent=t;$('#cfOk').textContent=lab||'خروج';$('#cf').classList.add('show');$('#cfOk').onclick=()=>{$('#cf').classList.remove('show');ok()};$('#cfNo').onclick=()=>$('#cf').classList.remove('show')}
 $('#lv').onclick=()=>ask('عايز تخرج من الغرفة؟ اللعبة الحالية بتنتهي.',leaveRoom);
-$('#cp').onclick=()=>{try{navigator.clipboard.writeText(room.code);toast('اننسخ الكود')}catch(e){toast('الكود: '+room.code)}};
+function copyCode(){if(!room)return;const t=room.code,ok=()=>toast('اتنسخ الكود: '+t);try{navigator.clipboard.writeText(t).then(ok,()=>toast('الكود: '+t))}catch(e){toast('الكود: '+t)}}
+$('#cp').onclick=copyCode;$('#cpBig').onclick=copyCode;
 
 /* ---------- voice (WebRTC, signalling via Firebase) ---------- */
 let vc=null,micOn=false,spkOn=true;
 const ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
-function vUI(){const st=vc&&vc.pc?vc.pc.connectionState:'';$('#vMic').textContent=micOn?'🎤 المايك: شغّال':'🎤 المايك: مكتوم';$('#vMic').classList.toggle('on',micOn);
-$('#vSpk').textContent=spkOn?'🔊 الصوت: شغّال':'🔇 الصوت: مكتوم';$('#vSpk').classList.toggle('on',spkOn);
+function vUI(){const st=vc&&vc.pc?vc.pc.connectionState:'';
+$('#vMic').setAttribute('aria-label',micOn?'المايك شغّال':'المايك مكتوم');$('#vMic').title=micOn?'المايك شغّال':'المايك مكتوم';$('#vMic').classList.toggle('on',micOn);
+$('#vSpk').setAttribute('aria-label',spkOn?'الصوت شغّال':'الصوت مكتوم');$('#vSpk').title=spkOn?'الصوت شغّال':'الصوت مكتوم';$('#vSpk').classList.toggle('on',spkOn);
 $('#vSt').textContent=({connected:'متصل صوتيًا ✅',connecting:'جارٍ الاتصال…',failed:'تعذّر الاتصال الصوتي'})[st]||''}
 function vClose(){if(!vc)return;vc.su.forEach(f=>{try{f()}catch(e){}});vc.su=[];try{vc.pc&&vc.pc.close()}catch(e){}vc.pc=null;vc.q=[]}
 function vStop(){if(!vc)return;try{if(room&&myRole&&micOn)room.ref.update({['m'+myRole]:false})}catch(e){}vClose();vc.un.forEach(f=>{try{f()}catch(e){}});if(vc.stream)vc.stream.getTracks().forEach(t=>t.stop());vc=null;micOn=false;$('#rAudio').srcObject=null;vUI()}
@@ -336,7 +397,7 @@ let back='home';
 function openPlay(m){if(m==='on'&&!db)return toast(onState==='fail'?'تعذّر الاتصال بالإنترنت':'جارٍ الاتصال… جرّب بعد ثواني');
 if(room)leaveRoom();mode=m;myRole=0;
 $('#pTitle').textContent=m==='ai'?'ضد الكمبيوتر · '+['','سهل','متوسط','صعب'][S.diff]:m==='pv'?'لاعبان':'أونلاين';
-if(m==='on'){watchLeaders();loadBoard(init().join(''));turn=1;over=false;sel=null;chain=false;render()}else newGame();
+if(m==='on'){lobbyStep('lbName');watchLeaders();loadBoard(init().join(''));turn=1;over=false;sel=null;chain=false;render()}else newGame();
 layout();show('play')}
 $('#hOn').onclick=()=>openPlay('on');$('#hAi').onclick=()=>show('level');$('#hPv').onclick=()=>openPlay('pv');
 $('#hSet').onclick=()=>{back='home';show('settings')};
@@ -348,7 +409,7 @@ const firebaseConfig={apiKey:"AIzaSyBEF4_R1dnOwpZefYNOMazBhnsmB_SjIHQ",authDomai
 function adapter(rtdb){return{
 doc(path){const ref=rtdb.ref(path);return{
 async get(){const s=await ref.once('value');return{exists:s.exists(),data:()=>s.val()}},
-set(v){return ref.set(v)},update(v){return ref.update(v)},delete(){return ref.remove()},
+set(v){return ref.set(v)},update(v){return ref.update(v)},delete(){return ref.remove()},od(){return ref.onDisconnect()},
 onSnapshot(cb,onErr){const h=s=>cb({exists:s.exists(),data:()=>s.val()});ref.on('value',h,onErr);return()=>ref.off('value',h)}}},
 collection(path){return{orderBy(field){return{limit(n){return{onSnapshot(cb,onErr){const q=rtdb.ref(path).orderByChild(field).limitToLast(n);const h=s=>{const docs=[];s.forEach(c=>{docs.push({data:()=>c.val()})});docs.reverse();cb({docs})};q.on('value',h,onErr);return()=>q.off('value',h)}}}}}}}}}
 let onState='wait';
@@ -360,7 +421,7 @@ firebase.initializeApp(firebaseConfig);const auth=firebase.auth();
 await Promise.race([auth.signInAnonymously(),sl(10000).then(()=>{throw new Error('timeout')})]);
 me=auth.currentUser.uid;db=adapter(firebase.database());setOnline('ok');
 try{const s=await db.doc('leaders/'+me).get();if(s.exists)myStats=s.data()||myStats}catch(e){}
-if(location.hash.startsWith('#room-')){openPlay('on');const c=location.hash.slice(6).toUpperCase();$('#code').value=c;if(getNick())joinRoom(c);else toast('اكتب اسمك وبعدين اضغط دخول الغرفة')}
+if(location.hash.startsWith('#room-')){openPlay('on');const c=location.hash.slice(6).toUpperCase();$('#code').value=c;if(getNick())joinRoom(c);else{wantJoin=true;toast('اكتب اسمك أول وبعدين ادخل الغرفة')}}
 }catch(e){console.error(e);setOnline('fail')}})();
 applySettings();setOnline('wait');
 </script>
